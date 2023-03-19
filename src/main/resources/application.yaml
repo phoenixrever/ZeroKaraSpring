@@ -1,0 +1,9 @@
+server:
+  port: 8080
+
+spring:
+  messages:
+    basename: i18n/messages
+logging:
+  level:
+    com.phoenixhell.zerokaraspring: debug
