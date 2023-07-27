@@ -81,7 +81,7 @@ public class TestBeanFactory {
         System.out.println();
         System.out.println("----------------------BeanPostProcessor  Bean制后处理器------------------------------");
         // Bean 后处理器, 针对 bean 的生命周期的各个阶段提供扩展, 例如 @Autowired @Resource ...
-        //在调用getBean方法的时候就进入了bean的生命周期 就会调用BeanPostProcessor 后置处理器
+        //在调用getBean方法的时候就进入了bean的生命周期（懒加载） 就会调用BeanPostProcessor 后置处理器
         //org.springframework.context.annotation.CommonAnnotationBeanPostProcessor@223d2c72
         //org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor@8f4ea7c
         beanFactory.getBeansOfType(BeanPostProcessor.class).values().stream()
