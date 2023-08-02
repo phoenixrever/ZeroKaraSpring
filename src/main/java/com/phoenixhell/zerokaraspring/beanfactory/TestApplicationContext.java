@@ -2,6 +2,8 @@ package com.phoenixhell.zerokaraspring.beanfactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletRegistrationBean;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
@@ -11,8 +13,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author チヨウ　カツヒ
@@ -24,27 +32,36 @@ public class TestApplicationContext {
     private static final Logger log = LoggerFactory.getLogger(TestApplicationContext.class);
 
     public static void main(String[] args) {
-        testClassPathXmlApplicationContext();
-//        testFileSystemXmlApplicationContext();
-//        testAnnotationConfigApplicationContext();
-//        testAnnotationConfigServletWebServerApplicationContext();
+        //testClassPathXmlApplicationContext();
+        //testFileSystemXmlApplicationContext();
+        //testAnnotationConfigApplicationContext();
+        testAnnotationConfigServletWebServerApplicationContext();
 
-        /*DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
-        System.out.println("读取之前...");
+        /*
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        System.out.println("读取xml文件之前BeanDefinitionNames是空的...");
         for (String name : beanFactory.getBeanDefinitionNames()) {
             System.out.println(name);
         }
         System.out.println("读取之后...");
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+
+        //class路径 和文件路径都可以
         reader.loadBeanDefinitions(new FileSystemResource("src\\main\\resources\\a02.xml"));
+       // reader.loadBeanDefinitions(new ClassPathResource("a02.xml"));
         for (String name : beanFactory.getBeanDefinitionNames()) {
             System.out.println(name);
-        }*/
+        }
+        */
+
 
         /*
             学到了什么
                 a. 常见的 ApplicationContext 容器实现
                 b. 内嵌容器、DispatcherServlet 的创建方法、作用
+                c. 我们并没有使用springboot的注解，springboot的本质就是帮我们自动注册了一些bean
+                   例如web环境 我们手动注册这些bean 就是springboot 要帮我们添加的，当然这3个是远远不够的
+                   还有其他组件
          */
     }
 
@@ -97,23 +114,35 @@ public class TestApplicationContext {
 
     @Configuration
     static class WebConfig {
+        //提供一个web容器 tomcat之类
         @Bean
         public ServletWebServerFactory servletWebServerFactory(){
             return new TomcatServletWebServerFactory();
         }
+
+        //servlet 对象  前控制器 所有的web请求都由它处理
         @Bean
         public DispatcherServlet dispatcherServlet() {
             return new DispatcherServlet();
         }
+
+        //将web容器 与servlet对象关联   将DispatcherServlet 注册到Tomcat服务器里面
         @Bean
         public DispatcherServletRegistrationBean registrationBean(DispatcherServlet dispatcherServlet) {
             return new DispatcherServletRegistrationBean(dispatcherServlet, "/");
         }
         @Bean("/hello")
         public Controller controller1() {
-            return (request, response) -> {
-                response.getWriter().print("hello");
-                return null;
+            //return (request, response) -> {
+            //    response.getWriter().print("hello");
+            //    return null;
+            //};
+            return new Controller() {
+                @Override
+                public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+                    response.getWriter().print("hello");
+                    return null;
+                }
             };
         }
     }
