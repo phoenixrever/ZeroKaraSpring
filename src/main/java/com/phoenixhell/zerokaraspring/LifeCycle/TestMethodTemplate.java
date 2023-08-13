@@ -9,7 +9,13 @@ public class TestMethodTemplate {
 
     public static void main(String[] args) {
         MyBeanFactory beanFactory = new MyBeanFactory();
-        beanFactory.addBeanPostProcessor(bean -> System.out.println("解析 @Autowired"));
+        beanFactory.addBeanPostProcessor(new BeanPostProcessor() {
+            @Override
+            public void inject(Object bean) {
+                System.out.println("解析 @Autowired");
+            }
+        });
+        //注意这边接口只有一个抽象方法 可以用的lanmda表达式
         beanFactory.addBeanPostProcessor(bean -> System.out.println("解析 @Resource"));
         beanFactory.getBean();
     }
