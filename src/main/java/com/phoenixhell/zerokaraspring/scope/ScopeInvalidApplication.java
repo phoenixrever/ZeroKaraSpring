@@ -10,13 +10,13 @@ import org.springframework.context.annotation.ComponentScan;
     如果 jdk > 8, 运行时请添加 --add-opens java.base/java.lang=ALL-UNNAMED
  */
 @ComponentScan("com.phoenixhell.zerokaraspring.scope.sub")
-public class A08_1 {
+public class ScopeInvalidApplication {
 
-    private static final Logger log = LoggerFactory.getLogger(A08_1.class);
+    private static final Logger log = LoggerFactory.getLogger(ScopeInvalidApplication.class);
 
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(A08_1.class);
+                new AnnotationConfigApplicationContext(ScopeInvalidApplication.class);
 
         E e = context.getBean(E.class);
         log.debug("{}", e.getF1().getClass());
@@ -29,9 +29,12 @@ public class A08_1 {
         log.debug("{}", e.getF2());
         log.debug("{}", e.getF2());
 
+
+        log.debug("{}", e.getF3().getClass());
         log.debug("{}", e.getF3());
         log.debug("{}", e.getF3());
 
+        log.debug("{}", e.getF4().getClass());
         log.debug("{}", e.getF4());
         log.debug("{}", e.getF4());
 
