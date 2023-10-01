@@ -1,9 +1,11 @@
 package com.phoenixhell.zerokaraspring.aop.agent;
 
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /*
@@ -12,7 +14,7 @@ import org.springframework.context.ConfigurableApplicationContext;
     2. 运行时需要在 VM options 里加入 -javaagent:C:/Users/manyh/.m2/repository/org/aspectj/aspectjweaver/1.9.7/aspectjweaver-1.9.7.jar
         把其中 C:/Users/manyh/.m2/repository 改为你自己 maven 仓库起始地址
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class})
 public class AgentApplication {
 
     private static final Logger log = LoggerFactory.getLogger(AgentApplication.class);

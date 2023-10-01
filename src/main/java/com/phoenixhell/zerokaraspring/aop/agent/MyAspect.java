@@ -10,7 +10,7 @@ public class MyAspect {
 
     private static final Logger log = LoggerFactory.getLogger(MyAspect.class);
 
-    @Before("execution(* com.itheima.service.MyService.*())")
+    @Before("execution(* com.phoenixhell.zerokaraspring.aop.agent.MyService.*())")
     public void before() {
         log.debug("before()");
     }
