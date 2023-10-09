@@ -2,7 +2,10 @@ package com.phoenixhell.zerokaraspring.aop.proxy.cglibproxy;
 
 import org.springframework.cglib.core.Signature;
 
+
 public class ProxyFastClass {
+
+    //只能掉 不带增强的原始的saveSuper 方法
     static Signature s0 = new Signature("saveSuper", "()V");
     static Signature s1 = new Signature("saveSuper", "(I)V");
     static Signature s2 = new Signature("saveSuper", "(J)V");
@@ -27,6 +30,9 @@ public class ProxyFastClass {
     }
 
     // 根据方法编号, 正常调用目标对象方法
+    //这里需要注意 proxy 里面有 methodProxy.invoke 还有methodProxy.invokeSuper 这2个方法 调用的是 增强的save 还是原始的saveSuper 方法喃
+    //我们其实调用的是原始saveSuper 方法 因为增强的功能已经在new MethodInterceptor() 的时候写在里面了
+    //当然你也不不可能调用invokeSuper 因为里面会调用methodInterceptor.intercept 就会变成死循环了
     public Object invoke(int index, Object proxy, Object[] args) {
         if (index == 0) {
             ((Proxy) proxy).saveSuper();

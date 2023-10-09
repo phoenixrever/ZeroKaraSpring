@@ -14,6 +14,7 @@ public class TargetFastClass {
             save(int)           1
             save(long)          2
         signature 包括方法名字、参数返回值
+        总的来说就是根据方法的签名信息获取它的编号
      */
     public int getIndex(Signature signature) {
         if (s0.equals(signature)) {
@@ -26,7 +27,7 @@ public class TargetFastClass {
         return -1;
     }
 
-    // 根据方法编号, 正常调用目标对象方法
+    // 根据getIndex返回的方法编号, 正常调用目标对象方法
     public Object invoke(int index, Object target, Object[] args) {
         if (index == 0) {
             ((Target) target).save();
@@ -43,7 +44,9 @@ public class TargetFastClass {
     }
 
     public static void main(String[] args) {
+        //TargetFastClass 在首次使用 MethodProxy.create 方法的时候就会被创建
         TargetFastClass fastClass = new TargetFastClass();
+        //实际情况下这边是MethodProxy.create 就传入Signature 了 因为我们是自建的FastClass 新建一个Signature 来模拟传入的
         int index = fastClass.getIndex(new Signature("save", "(I)V"));
         System.out.println(index);
         fastClass.invoke(index, new Target(), new Object[]{100});
