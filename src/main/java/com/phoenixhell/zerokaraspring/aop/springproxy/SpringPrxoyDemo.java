@@ -47,7 +47,9 @@ public class SpringPrxoyDemo {
         ProxyFactory factory = new ProxyFactory();
         factory.setTarget(target);
         factory.addAdvisor(advisor);
+        //你要告诉proxyTargetClass 这个目标有没实现接口不然就会使用cglib代理
         factory.setInterfaces(target.getClass().getInterfaces());
+        //设置true的话 总是使用 cglib 实现
         factory.setProxyTargetClass(false);
         Target2 proxy = (Target2) factory.getProxy();
         System.out.println(proxy.getClass()); //打印spring 选择的代理类型
