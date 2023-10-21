@@ -1,12 +1,18 @@
 package com.phoenixhell.zerokaraspring.aop.aspectandadvisor;
 
+import org.aopalliance.intercept.MethodInterceptor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.aop.Advisor;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ConfigurationClassPostProcessor;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 public class AnnotationAwareAspectJAutoProxyCreatorDemo {
     public static void main(String[] args) {
@@ -14,6 +20,8 @@ public class AnnotationAwareAspectJAutoProxyCreatorDemo {
         GenericApplicationContext context = new GenericApplicationContext();
         context.registerBean("aspect1", Aspect1.class);
         context.registerBean("config", Config.class);
+        //target1 必须在容器中 才会为你创建代理 切面才会生效 自己new的是没有代理的
+        context.registerBean("target1", Target1.class);
         context.registerBean(ConfigurationClassPostProcessor.class);
         context.registerBean(AnnotationAwareAspectJAutoProxyCreator.class);
         // BeanPostProcessor  * : AnnotationAwareAspectJAutoProxyCreator的扩展点
@@ -55,6 +63,12 @@ public class AnnotationAwareAspectJAutoProxyCreatorDemo {
                 b. 通常代理创建的活在原始对象初始化后执行, 但碰到循环依赖会提前至依赖注入之前执行
                 c. 高级的 @Aspect 切面会转换为低级的 Advisor 切面, 理解原理, 大道至简
          */
+
+        //观察执行的顺序
+        //target1 必须在容器中 才会为你创建代理 切面才会生效 自己new的是没有代理的
+        Target1 target1 = (Target1) context.getBean("target1");
+
+        target1.foo();
     }
 
     static class Target1 {
@@ -70,7 +84,7 @@ public class AnnotationAwareAspectJAutoProxyCreatorDemo {
     }
 
     @Aspect // 高级切面类
-    @Order(1)
+    @Order(1) //数字小优先级高
     static class Aspect1 {
         @Before("execution(* foo())")
         public void before1() {
@@ -85,11 +99,13 @@ public class AnnotationAwareAspectJAutoProxyCreatorDemo {
 
     @Configuration
     static class Config {
-        /*@Bean // 低级切面
+        @Bean // 低级切面
+        //@Order(2) //加在这是没有效果的 原因视频没说
         public Advisor advisor3(MethodInterceptor advice3) {
             AspectJExpressionPointcut pointcut = new AspectJExpressionPointcut();
             pointcut.setExpression("execution(* foo())");
             DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(pointcut, advice3);
+            advisor.setOrder(2);
             return advisor;
         }
         @Bean
@@ -100,7 +116,6 @@ public class AnnotationAwareAspectJAutoProxyCreatorDemo {
                 System.out.println("advice3 after...");
                 return result;
             };
-        }*/
+        }
     }
-
 }
