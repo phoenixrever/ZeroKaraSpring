@@ -26,7 +26,7 @@ public class YmlReturnValueHandler implements HandlerMethodReturnValueHandler {
         response.setContentType("text/plain;charset=utf-8");
         response.getWriter().print(str);
 
-        // 3. 设置请求已经处理完毕
+        // 3. 设置请求已经处理完毕 告诉springmvc 不要转换成modelAndView再继续处理了
         mavContainer.setRequestHandled(true);
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 public class TokenArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
-    // 是否支持某个参数
+    // 是否支持某个参数 比如这里判断参数上是否加了token注解
     public boolean supportsParameter(MethodParameter parameter) {
         Token token = parameter.getParameterAnnotation(Token.class);
         return token != null;

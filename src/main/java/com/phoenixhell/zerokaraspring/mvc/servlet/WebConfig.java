@@ -53,24 +53,31 @@ public class WebConfig {
         return registrationBean;
     }
 
-    //// 如果用 DispatcherServlet 初始化时默认添加的组件, 并不会作为 bean, 给测试带来困扰
-    //// ⬅️1. 加入RequestMappingHandlerMapping
-    //@Bean
-    //public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-    //    return new RequestMappingHandlerMapping();
-    //}
-    //
-    //// ⬅️2. 继续加入RequestMappingHandlerAdapter, 会替换掉 DispatcherServlet 默认的 4 个 HandlerAdapter
+    // 如果用 DispatcherServlet 初始化时默认添加的组件, 并不会作为 bean, 给测试带来困扰
+    // 所以我们自己创建一个RequestMappingHandlerMapping 放入容器
+    // ⬅️1. 加入RequestMappingHandlerMapping
+    @Bean
+    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
+        return new RequestMappingHandlerMapping();
+    }
+
+    //invokeHandlerMethod 方法收到包含 所以自定义一个
     //@Bean
     //public MyRequestMappingHandlerAdapter requestMappingHandlerAdapter() {
-    //    TokenArgumentResolver tokenArgumentResolver = new TokenArgumentResolver();
-    //    YmlReturnValueHandler ymlReturnValueHandler = new YmlReturnValueHandler();
-    //    MyRequestMappingHandlerAdapter handlerAdapter = new MyRequestMappingHandlerAdapter();
-    //    handlerAdapter.setCustomArgumentResolvers(List.of(tokenArgumentResolver));
-    //    handlerAdapter.setCustomReturnValueHandlers(List.of(ymlReturnValueHandler));
-    //    return handlerAdapter;
+    //    return new MyRequestMappingHandlerAdapter();
     //}
-    //
+
+    // ⬅️2. 继续加入RequestMappingHandlerAdapter, 会替换掉 DispatcherServlet 默认的 4 个 HandlerAdapter
+    @Bean
+    public MyRequestMappingHandlerAdapter requestMappingHandlerAdapter() {
+        TokenArgumentResolver tokenArgumentResolver = new TokenArgumentResolver();
+        YmlReturnValueHandler ymlReturnValueHandler = new YmlReturnValueHandler();
+        MyRequestMappingHandlerAdapter handlerAdapter = new MyRequestMappingHandlerAdapter();
+        handlerAdapter.setCustomArgumentResolvers(List.of(tokenArgumentResolver));
+        handlerAdapter.setCustomReturnValueHandlers(List.of(ymlReturnValueHandler));
+        return handlerAdapter;
+    }
+
     //public HttpMessageConverters httpMessageConverters() {
     //    return new HttpMessageConverters();
     //}
